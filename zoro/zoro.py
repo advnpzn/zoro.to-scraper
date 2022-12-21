@@ -3,11 +3,10 @@ from bs4 import BeautifulSoup
 import lxml
 import json
 from pprint import pprint
-
+from anime import ZoroAnime
 
 
 class Zoro:
-
 
     def __init__(self) -> None:
         self.__url = "https://zoro.to/"
@@ -23,7 +22,7 @@ class Zoro:
             print("error")
 
 
-    def search(self, query: str)-> list:
+    def search(self, query: str, limit = 5)-> list[ZoroAnime]:
 
         animeListRes = self.__request(self.__search+query)
         soup = BeautifulSoup(animeListRes, 'lxml')
@@ -35,12 +34,13 @@ class Zoro:
             name = i.find('a', {'class':'dynamic-name'})
             href = self.__url+"watch"+name['href']
             name = name.string
-            __animeList.append({"name": name, "poster": img, "watch_url": href})
+            __animeList.append(ZoroAnime(name, href, img))
         
-        return __animeList
+        return __animeList[: limit + 1] if len(__animeList) > limit else __animeList
 
 
         
 a = Zoro()
-pprint(a.search(input("Enter Anime Name : ")))
-
+b = a.search("Bocchi")
+    
+print(b)
